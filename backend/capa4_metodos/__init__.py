@@ -1,5 +1,16 @@
-"""Capa 4 — Métodos numéricos iterativos.
+"""Capa 4: métodos iterativos y tipos compartidos."""
 
-Esta capa es puramente matemática: no debe importar FastAPI ni ninguna otra
-capa del proyecto.
-"""
+from .gauss_seidel import gauss_seidel
+from .jacobi import jacobi
+from .sor import sor
+from .ssor import ssor
+from .tipos import MatrizDispersa, ResultadoSolucion
+
+__all__ = [
+    "MatrizDispersa",
+    "ResultadoSolucion",
+    "gauss_seidel",
+    "jacobi",
+    "sor",
+    "ssor",
+]

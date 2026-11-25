@@ -1,17 +1,23 @@
-"""
-Stub del método SSOR (Symmetric Successive Over-Relaxation).
+"""Método SSOR para sistemas dispersos."""
 
-Rol responsable: ingeniero numérico.
-"""
+from .tipos import MatrizDispersa, ResultadoSolucion
 
 
-def ssor(G, I, omega=1.0, tol=1e-6, max_iter=1000):
+def ssor(
+    matriz: MatrizDispersa,
+    tolerancia: float,
+    omega: float,
+    max_iteraciones: int,
+) -> ResultadoSolucion:
+    """Resuelve ``G·V=b`` mediante SOR simétrico (SSOR).
+
+    La barrida hacia adelante calcula
+    ``y_i = (1-omega)V_i^k + omega (b_i - Σ[j<i]G_ij y_j
+    - Σ[j>i]G_ij V_j^k) / G_ii``. La barrida hacia atrás calcula
+    ``V_i^(k+1) = (1-omega)y_i + omega (b_i - Σ[j<i]G_ij y_j
+    - Σ[j>i]G_ij V_j^(k+1)) / G_ii``. La iteración termina cuando
+    ``||b-G·V||∞ / ||b||∞ < tolerancia`` o se alcanza ``max_iteraciones``.
+
+    TODO: sprint 2.
     """
-    Stub para SSOR.
-
-    TODO: implementar en Sprint 2 (rol: ingeniero numérico).
-    TODO: documentar el rango válido de ``omega`` (0 < omega < 2).
-    TODO: definir la estructura de retorno (solución, iteraciones, historial de error).
-    TODO: documentar el criterio de parada y el manejo de no convergencia.
-    """
-    pass
+    raise NotImplementedError  # TODO sprint 2
