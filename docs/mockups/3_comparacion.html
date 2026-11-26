@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mockup 3 · Comparación</title>
+<link rel="stylesheet" href="mockups.css">
+<script src="datos_mockups.js"></script>
+<script src="graficos.js"></script>
+<style>
+  .filtros { display: flex; align-items: end; gap: 20px; }
+  .filtros .campo { margin: 0; }
+  .ganador { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; border-left: 4px solid var(--serie-sor); }
+  .ganador .grande { font-size: 30px; font-weight: 800; color: var(--marca-900); }
+  .ganador ul { margin: 0; padding-left: 18px; color: var(--tinta-2); font-size: 14px; }
+  .ganador ul b { color: var(--tinta); }
+  .dos { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; }
+  .costo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  .dos > * { min-width: 0; }
+  .costo > div { border: 1px solid var(--borde); border-radius: 8px; padding: 12px; }
+  .costo .val { font-size: 20px; font-weight: 700; color: var(--marca-900); }
+  .costo .etq { font-size: 12px; color: var(--tinta-2); }
+</style>
+</head>
+<body>
+<header class="barra">
+  <div class="logo"><svg width="26" height="26" viewBox="0 0 26 26"><rect x="1" y="1" width="24" height="24" rx="5" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M1 9h24M1 17h24M9 1v24M17 1v24" stroke="#fff" stroke-width="1.2"/><circle cx="9" cy="17" r="3" fill="#ec4647"/></svg>Mallas de puesta a tierra</div>
+  <nav><a>Contexto</a><a>Simulación</a><a class="activa">Comparación</a><a>Casos de estudio</a><a>Validación</a></nav>
+  <div class="salud"><i></i>Servidor conectado</div>
+</header>
+
+<main class="pagina">
+  <div class="titulo-vista">
+    <div>
+      <span class="pregunta">¿Cuál de los cuatro métodos llega antes a la solución y a qué costo?</span>
+      <h1>Comparación de métodos</h1>
+      <p>La misma malla, el mismo vector inicial y la misma tolerancia, resueltos por Jacobi, Gauss-Seidel, SOR y SSOR.</p>
+    </div>
+  </div>
+
+  <div class="tarjeta filtros">
+    <div class="campo"><label>Malla</label><div style="display:flex;gap:8px"><span class="chip">Montaje 3×3</span><span class="chip on">10×10 · falla al centro</span><span class="chip">20×20</span><span class="chip">Netlist propia</span></div></div>
+    <div class="campo" style="width:130px"><label>Tolerancia</label><div class="entrada num">1e-8</div></div>
+    <div class="campo" style="width:150px"><label>ω para SOR</label><div class="entrada num" id="wsor"></div></div>
+    <div class="campo" style="width:150px"><label>ω para SSOR</label><div class="entrada num" id="wssor"></div></div>
+    <div class="campo"><label>&nbsp;</label><span class="chip on">✓ Usar ω óptimo del barrido</span></div>
+    <span class="boton primario" style="margin-left:auto">Comparar los 4</span>
+  </div>
+
+  <div class="tarjeta ganador">
+    <div><div class="pregunta">Método más conveniente</div><div class="grande" id="ganador"></div></div>
+    <ul id="razones"></ul>
+  </div>
+
+  <div class="tarjeta">
+    <h3>Resumen por método</h3>
+    <p class="sub">Error frente a la solución de referencia (solver directo, solo para validar).</p>
+    <table id="tabla"></table>
+  </div>
+
+  <div class="dos">
+    <div class="tarjeta">
+      <h3>Curvas de convergencia superpuestas</h3>
+      <p class="sub">Residuo relativo por iteración, escala logarítmica. Más empinada = converge más rápido.</p>
+      <div class="leyenda" id="leyenda"></div>
+      <div id="curvas"></div>
+    </div>
+    <div style="display:grid;gap:20px;align-content:start">
+      <div class="tarjeta">
+        <h3>Análisis del factor ω</h3>
+        <p class="sub">Iteraciones necesarias según ω. Con ω = 1, SOR es Gauss-Seidel.</p>
+        <div class="leyenda"><span><i style="background:var(--serie-sor)"></i>SOR</span><span><i style="background:var(--serie-ssor)"></i>SSOR</span></div>
+        <div id="omega"></div>
+      </div>
+      <div class="tarjeta">
+        <h3>¿Por qué no eliminación gaussiana?</h3>
+        <p class="sub">Para la malla 50×50 (n = 2.500 incógnitas):</p>
+        <div class="costo">
+          <div><div class="val">≈ 1,0 × 10¹⁰</div><div class="etq">operaciones de eliminación densa (2n³/3) y la matriz se llena de valores no nulos</div></div>
+          <div><div class="val">≈ 12.300</div><div class="etq">entradas no nulas recorridas por iteración con el formato disperso</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="pie-boceto">Mockup 3 de 5 · Comparación · datos ilustrativos (malla 10×10, enlaces 1 Ω, fuga 10 Ω, falla al centro) · tiempos de un prototipo, no de la Capa 4 final</p>
+</main>
+
+<script>
+  const C = window.DATOS.comparacion10x10, M = C.metodos;
+  const info = [
+    ["jacobi", "Jacobi", "#257de0"], ["gauss_seidel", "Gauss-Seidel", "#f47230"],
+    ["sor", "SOR", "#00b894"], ["ssor", "SSOR", "#f2a600"],
+  ];
+  document.getElementById("wsor").textContent = G.fmt(C.omega_opt, 2);
+  document.getElementById("wssor").textContent = G.fmt(C.omega_opt_ssor, 2);
+  const sor = M.sor, gs = M.gauss_seidel, ja = M.jacobi, ss = M.ssor;
+  document.getElementById("ganador").innerHTML = `SOR <span style="font-size:18px;font-weight:600;color:var(--tinta-2)">ω = ${G.fmt(C.omega_opt, 2)}</span>`;
+  document.getElementById("razones").innerHTML =
+    `<li><b>${sor.iteraciones} iteraciones</b> frente a ${gs.iteraciones} de Gauss-Seidel y ${ja.iteraciones} de Jacobi (${Math.round(gs.iteraciones / sor.iteraciones)}× y ${Math.round(ja.iteraciones / sor.iteraciones)}× menos).</li>` +
+    `<li><b>Mismo costo por iteración</b> que Gauss-Seidel: un barrido por las entradas no nulas. SSOR hace dos barridos, por eso tarda más aunque necesite ${ss.iteraciones}.</li>` +
+    `<li><b>Convergencia garantizada</b>: G es simétrica y definida positiva, así que SOR converge para 0 &lt; ω &lt; 2.</li>` +
+    `<li>Costo: requiere elegir ω. El barrido de la derecha muestra el valor óptimo.</li>`;
+
+  let t = `<tr><th>Método</th><th class="der">ω</th><th class="der">Iteraciones</th><th class="der">Tiempo (ms)</th><th class="der">Tiempo por iteración (ms)</th><th class="der">Error máx. vs referencia</th><th>Estado</th></tr>`;
+  for (const [k, nom, col] of info) {
+    const m = M[k];
+    t += `<tr${k === "sor" ? ' class="destacada"' : ""}><td><span class="marca-serie" style="background:${col}"></span>${nom}${k === "sor" ? " · recomendado" : ""}</td>
+      <td class="der">${k === "jacobi" || k === "gauss_seidel" ? "—" : G.fmt(m.omega, 2)}</td><td class="der">${m.iteraciones}</td>
+      <td class="der">${G.fmt(m.tiempo_ms, 1)}</td><td class="der">${G.fmt(m.tiempo_ms / m.iteraciones, 3)}</td>
+      <td class="der">${m.error_max.toExponential(1)}</td><td><span class="estado ok"><span class="ico">✓</span>Convergió</span></td></tr>`;
+  }
+  document.getElementById("tabla").innerHTML = t;
+  document.getElementById("leyenda").innerHTML = info.map(([k, n, c]) => `<span><i style="background:${c}"></i>${n}</span>`).join("");
+
+  const pos = { jacobi: [-8, -10, "end"], gauss_seidel: [8, 4, "start"], sor: [-6, -12, "end"], ssor: [8, 16, "start"] };
+  const xmax = ja.iteraciones + 20;
+  const series = info.map(([k, n, c]) => {
+    const h = M[k].historial, it = h.length;
+    return {
+      color: c, puntos: h.map((v, i) => [i + 1, v]), marcadores: [[it, h[it - 1]]],
+      etiqueta: { en: [it, h[it - 1]], texto: `${n} · ${it}`, dx: pos[k][0], dy: pos[k][1], ancla: pos[k][2] },
+    };
+  });
+  const xi = 120;
+  document.getElementById("curvas").innerHTML = G.lineas({
+    ancho: 720, alto: 400, logY: true, dominioX: [0, xmax], dominioY: [1e-9, 1],
+    ticksY: [1, 1e-2, 1e-4, 1e-6, 1e-8], ticksX: [0, 100, 200, 300, 400, 500],
+    tituloX: "Iteración", tituloY: "Residuo relativo", margenDer: 24,
+    referencias: [{ y: 1e-8, texto: "tolerancia 10⁻⁸", xTexto: 380, debajo: true }], series,
+    tooltip: { x: xi, titulo: "Iteración " + xi, filas: info.filter(([k]) => M[k].historial.length >= xi).map(([k, n, c]) => ({ nombre: n, color: c, y: M[k].historial[xi - 1], valor: M[k].historial[xi - 1].toExponential(1) })).concat(info.filter(([k]) => M[k].historial.length < xi).map(([k, n, c]) => ({ nombre: n, color: c, valor: "terminó (" + M[k].historial.length + ")" }))) },
+  });
+
+  const B = C.barrido_omega, opt = B.find((b) => b.omega === C.omega_opt);
+  const ymaxW = Math.ceil(Math.max(...B.map((b) => Math.max(b.sor, b.ssor))) / 100) * 100;
+  document.getElementById("omega").innerHTML = G.lineas({
+    ancho: 520, alto: 250, dominioX: [1, 1.95], dominioY: [0, ymaxW], ticksY: Array.from({ length: ymaxW / 100 + 1 }, (_, i) => i * 100),
+    ticksX: [1, 1.2, 1.4, 1.6, 1.8], fmtX: (v) => G.fmt(v, 1), tituloX: "Factor de relajación ω", tituloY: "Iteraciones",
+    referencias: [{ x: C.omega_opt, texto: "óptimo SOR ω = " + G.fmt(C.omega_opt, 2) }],
+    series: [
+      { color: "#00b894", puntos: B.map((b) => [b.omega, b.sor]), marcadores: [[opt.omega, opt.sor]], etiqueta: { en: [opt.omega, opt.sor], texto: opt.sor + " it.", dx: 8, dy: 16 } },
+      { color: "#f2a600", puntos: B.map((b) => [b.omega, b.ssor]) },
+    ],
+  });
+</script>
+</body>
+</html>

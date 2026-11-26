@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mockup 5 · Validación</title>
+<link rel="stylesheet" href="mockups.css">
+<script src="datos_mockups.js"></script>
+<script src="graficos.js"></script>
+<style>
+  .layout { display: grid; grid-template-columns: 440px 1fr; gap: 20px; align-items: start; }
+  .layout > *, .der-col > *, .dos > * { min-width: 0; }
+  .der-col { display: grid; gap: 20px; }
+  .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .foto { height: 150px; border: 2px dashed var(--borde); border-radius: 8px; display: grid; place-items: center; color: var(--tinta-2); font-size: 13px; background: #fbfcfd; margin-top: 12px; }
+  .materiales { font-size: 13px; margin-top: 12px; }
+  .materiales td { padding: 5px 8px; }
+  .zona-carga { border: 2px dashed var(--marca-500); background: var(--marca-100); border-radius: 8px; padding: 18px; text-align: center; color: var(--marca-700); font-size: 13px; }
+  .conclusion { border-left: 4px solid var(--estado-ok); }
+  .causas li { margin-bottom: 8px; font-size: 13px; color: var(--tinta-2); }
+  .causas li b { color: var(--tinta); }
+</style>
+</head>
+<body>
+<header class="barra">
+  <div class="logo"><svg width="26" height="26" viewBox="0 0 26 26"><rect x="1" y="1" width="24" height="24" rx="5" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M1 9h24M1 17h24M9 1v24M17 1v24" stroke="#fff" stroke-width="1.2"/><circle cx="9" cy="17" r="3" fill="#ec4647"/></svg>Mallas de puesta a tierra</div>
+  <nav><a>Contexto</a><a>Simulación</a><a>Comparación</a><a>Casos de estudio</a><a class="activa">Validación</a></nav>
+  <div class="salud"><i></i>Servidor conectado</div>
+</header>
+
+<main class="pagina">
+  <div class="titulo-vista">
+    <div>
+      <span class="pregunta">¿El modelo numérico representa lo que ocurre en un montaje real?</span>
+      <h1>Validación contra la malla física</h1>
+      <p>Comparación nodo por nodo entre el potencial medido en el montaje 3×3 y el calculado por el solver. No se busca "el modelo es exacto", sino una discrepancia acotada y explicable.</p>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside style="display:grid;gap:20px">
+      <div class="tarjeta">
+        <h3>El montaje</h3>
+        <p class="sub">12 resistencias de enlace, 9 de fuga a una tierra común y una fuente de 5 V con resistencia en serie en el nodo central.</p>
+        <svg width="400" height="320" viewBox="0 0 400 320" role="img" aria-label="Esquema del montaje 3x3">
+          <defs>
+            <g id="rh"><path d="M0 0 h14 l4 -6 l8 12 l8 -12 l8 12 l8 -12 l8 12 l4 -6 h14" fill="none" stroke="#0d3a5a" stroke-width="2"/></g>
+            <g id="tierra"><path d="M-9 0 h18 M-6 4 h12 M-3 8 h6" stroke="#5c6670" stroke-width="2"/></g>
+          </defs>
+          <g id="esquema"></g>
+        </svg>
+        <div class="foto">📷 Foto del montaje (protoboard) — se agrega al construirlo</div>
+        <table class="materiales">
+          <tr><td>12 × resistencia 100 Ω (enlaces)</td><td>9 × resistencia 1 kΩ (fugas)</td></tr>
+          <tr><td>1 × resistencia 220 Ω (serie)</td><td>Fuente 5 V · multímetro digital</td></tr>
+        </table>
+      </div>
+      <div class="tarjeta">
+        <h3>Cargar mediciones</h3>
+        <p class="sub">Un valor por nodo, en voltios, respecto de la tierra común.</p>
+        <div class="zona-carga">Arrastra un CSV <code>nodo,voltaje</code> aquí o <b>elige un archivo</b><br><span style="color:var(--tinta-2)">⭳ Descargar plantilla</span></div>
+        <div style="text-align:center;margin:10px 0;color:var(--tinta-2);font-size:12px">o</div>
+        <span class="boton ancho">Ingresar a mano (tabla de 9 nodos)</span>
+      </div>
+    </aside>
+
+    <section class="der-col">
+      <div class="indicadores">
+        <div class="indicador"><div class="etq">Error relativo máximo</div><div class="val num" id="emax"></div></div>
+        <div class="indicador"><div class="etq">Error relativo medio</div><div class="val num" id="emed"></div></div>
+        <div class="indicador"><div class="etq">Nodos dentro de ±5 %</div><div class="val num" id="dentro"></div></div>
+        <div class="indicador"><div class="etq">Instrumento</div><div class="val" style="font-size:16px;padding-top:6px">Multímetro<small>±(0,5 % + 2 d)</small></div></div>
+      </div>
+
+      <div class="tarjeta conclusion">
+        <div class="pregunta">Conclusión</div>
+        <p style="font-size:16px" id="conclusion"></p>
+      </div>
+
+      <div class="dos">
+        <div class="tarjeta">
+          <h3>Error relativo por nodo</h3>
+          <p class="sub">(medido − calculado) / calculado. Positivo = el montaje marca más que el modelo.</p>
+          <div id="barras"></div>
+        </div>
+        <div class="tarjeta">
+          <h3>Medido frente a calculado</h3>
+          <p class="sub">Tensión de cada nodo (V).</p>
+          <table id="tabla"></table>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <h3>Fuentes de discrepancia</h3>
+        <p class="sub">Lo que el modelo no captura y cuánto puede explicar.</p>
+        <ul class="causas">
+          <li><b>Tolerancia de las resistencias (±5 %):</b> desplaza cada conductancia de G; es la causa dominante esperada.</li>
+          <li><b>Resistencias de contacto</b> de la protoboard y los cables: suman en serie con los enlaces.</li>
+          <li><b>Fuente real:</b> la tensión bajo carga no es exactamente 5 V; el equivalente de Norton supone 5 V / 220 Ω.</li>
+          <li><b>Instrumento:</b> exactitud del multímetro y su impedancia de entrada en paralelo con cada nodo.</li>
+          <li><b>Modelo de terreno:</b> en el montaje la "tierra" es un nodo común; un terreno real reparte la fuga de forma continua.</li>
+        </ul>
+        <div class="nota"><span class="nota-num">1</span>Si un nodo sale de la banda de ±5 %, su fila se marca con <span class="estado alerta"><span class="ico">!</span></span> y se sugiere medir de nuevo esa resistencia.</div>
+      </div>
+    </section>
+  </div>
+  <p class="pie-boceto">Mockup 5 de 5 · Validación · los valores "medidos" son DE EJEMPLO (desviaciones inventadas) hasta tener las mediciones reales del montaje</p>
+</main>
+
+<script>
+  const V = window.DATOS.validacion, c = V.calculado, m = V.medido;
+  const err = c.map((v, i) => (m[i] - v) / v * 100), abs = err.map(Math.abs);
+  const emax = Math.max(...abs), emed = abs.reduce((a, b) => a + b, 0) / abs.length;
+  document.getElementById("emax").innerHTML = G.fmt(emax, 1) + "<small>% · nodo " + (abs.indexOf(emax) + 1) + "</small>";
+  document.getElementById("emed").innerHTML = G.fmt(emed, 1) + "<small>%</small>";
+  document.getElementById("dentro").innerHTML = abs.filter((e) => e <= 5).length + "<small>de 9</small>";
+  document.getElementById("conclusion").innerHTML = `El modelo explica el comportamiento del montaje con un error medio de <b>${G.fmt(emed, 1)} %</b> y máximo de <b>${G.fmt(emax, 1)} %</b>, dentro de lo que justifica la tolerancia de las resistencias.`;
+
+  const im = abs.indexOf(emax);
+  document.getElementById("barras").innerHTML = G.barras({
+    ancho: 400, alto: 270, valores: err, etiquetas: err.map((_, i) => "N" + (i + 1)), dominioY: [-6, 6], ticksY: [-6, -3, 0, 3, 6],
+    banda: 5, color: "#257de0", tituloX: "Nodo", tituloY: "Error relativo", rotular: [im],
+  });
+
+  let t = `<tr><th>Nodo</th><th class="der">Medido</th><th class="der">Calculado</th><th class="der">Error</th></tr>`;
+  c.forEach((v, i) => {
+    t += `<tr${i === 4 ? ' class="destacada"' : ""}><td>${i + 1}${i === 4 ? " ⚡" : ""}</td><td class="der">${G.fmt(m[i], 3)}</td><td class="der">${G.fmt(v, 3)}</td><td class="der">${(err[i] >= 0 ? "+" : "") + G.fmt(err[i], 1)} %</td></tr>`;
+  });
+  document.getElementById("tabla").innerHTML = t;
+
+  // Esquema: nodos en cuadrícula, resistencias de enlace (zigzag) y de fuga hacia la tierra común
+  const P = (i) => [70 + (i % 3) * 120, 40 + Math.floor(i / 3) * 105];
+  let s = "";
+  for (let i = 0; i < 9; i++) {
+    const [x, y] = P(i);
+    if (i % 3 < 2) s += `<use href="#rh" transform="translate(${x} ${y}) scale(${120 / 92} 1)"/>`;
+    if (i + 3 < 9) s += `<use href="#rh" transform="translate(${x} ${y}) rotate(90) scale(${105 / 92} 1)"/>`;
+  }
+  for (let i = 0; i < 9; i++) {
+    const [x, y] = P(i);
+    s += `<path d="M${x} ${y} l-24 24" stroke="#9aa6b2" stroke-width="1.5" stroke-dasharray="3 3"/><use href="#tierra" transform="translate(${x - 26} ${y + 26})"/>`;
+    s += `<circle cx="${x}" cy="${y}" r="11" fill="${i === 4 ? "#1f6fa3" : "#fff"}" stroke="#1f6fa3" stroke-width="2"/>`;
+    s += `<text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="${i === 4 ? "#fff" : "#0b2f4a"}">${i + 1}</text>`;
+  }
+  s += `<text x="200" y="312" text-anchor="middle" font-size="12" fill="#5c6670">Punteado: fuga 1 kΩ a tierra · nodo 5: 5 V + 220 Ω</text>`;
+  document.getElementById("esquema").innerHTML = s;
+</script>
+</body>
+</html>
