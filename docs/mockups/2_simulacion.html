@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mockup 2 · Simulación</title>
+<link rel="stylesheet" href="mockups.css">
+<script src="datos_mockups.js"></script>
+<script src="graficos.js"></script>
+<style>
+  .layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+  .resultados { display: grid; gap: 20px; }
+  .graficas { display: grid; grid-template-columns: 420px 1fr; gap: 20px; }
+  .layout > *, .resultados > *, .graficas > * { min-width: 0; }
+  .error-campo { border-color: var(--estado-peligro) !important; }
+  .msg-error { color: var(--texto-peligro); font-size: 12px; display: flex; gap: 6px; align-items: center; }
+  .exportar { display: flex; gap: 10px; }
+</style>
+</head>
+<body>
+<header class="barra">
+  <div class="logo"><svg width="26" height="26" viewBox="0 0 26 26"><rect x="1" y="1" width="24" height="24" rx="5" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M1 9h24M1 17h24M9 1v24M17 1v24" stroke="#fff" stroke-width="1.2"/><circle cx="9" cy="17" r="3" fill="#ec4647"/></svg>Mallas de puesta a tierra</div>
+  <nav><a>Contexto</a><a class="activa">Simulación</a><a>Comparación</a><a>Casos de estudio</a><a>Validación</a></nav>
+  <div class="salud"><i></i>Servidor conectado</div>
+</header>
+
+<main class="pagina">
+  <div class="titulo-vista">
+    <div>
+      <span class="pregunta">¿Cuál es el potencial en cada nodo ante una falla dada?</span>
+      <h1>Simulación sobre malla reducida</h1>
+      <p>Una malla pequeña que se puede seguir a mano y comparar con el montaje físico. Elige el método, ajusta los parámetros y el nodo de falla.</p>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="tarjeta">
+      <h3>Parámetros</h3>
+      <p class="sub">Se validan en la Capa 2 antes de llegar al cálculo.</p>
+
+      <div class="campo"><label>Malla</label>
+        <div class="segmentado"><span class="on">Montaje 3×3</span><span>Netlist propia</span><span>Archivo</span></div>
+      </div>
+      <div class="campo"><label>Netlist <span style="font-weight:400;color:var(--tinta-2)">· solo lectura en "Montaje 3×3"</span></label>
+        <div class="area-texto" id="netlist"></div>
+        <span class="ayuda">Formato: <code>R id a b ohmios</code>, <code>I id desde hacia amperios</code>, nodo 0 = tierra.</span>
+      </div>
+      <div class="campo"><label>Método</label><div class="selector">SOR — sobrerrelajación sucesiva</div></div>
+      <div class="campo"><label>Factor de relajación ω <span class="num" style="float:right">1,10</span></label>
+        <div class="deslizador"><div class="pista"></div><div class="lleno" style="width:55%"></div><div class="pomo" style="left:calc(55% - 9px)"></div></div>
+        <span class="ayuda">Solo SOR y SSOR. Converge si 0 &lt; ω &lt; 2 (G es definida positiva).</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="campo"><label>Tolerancia</label><div class="entrada num">1e-8</div></div>
+        <div class="campo"><label>Máx. iteraciones</label><div class="entrada error-campo num">0</div><span class="msg-error">✕ Debe ser un entero mayor que 0</span></div>
+      </div>
+      <div class="campo"><label>Nodo de falla</label><div class="selector">Nodo 5 (centro)</div><span class="ayuda">También se elige haciendo clic en un nodo del diagrama.</span></div>
+      <span class="boton primario ancho">Resolver</span>
+      <div class="nota" style="margin-top:14px"><span class="nota-num">1</span>Estado de error de ejemplo: el campo inválido se marca y el botón queda deshabilitado hasta corregirlo. El mensaje viene del <b>422</b> de la Capa 2.</div>
+    </aside>
+
+    <section class="resultados">
+      <div class="indicadores">
+        <div class="indicador"><div class="etq">Estado</div><div class="val"><span class="estado ok" style="font-size:20px"><span class="ico">✓</span>Convergió</span></div></div>
+        <div class="indicador"><div class="etq">Iteraciones</div><div class="val num" id="it"></div></div>
+        <div class="indicador"><div class="etq">Tiempo de cálculo</div><div class="val num" id="tiempo"></div></div>
+        <div class="indicador"><div class="etq">Residuo relativo final</div><div class="val num" id="residuo"></div></div>
+      </div>
+
+      <div class="graficas">
+        <div class="tarjeta">
+          <h3>Potencial en cada nodo (V)</h3>
+          <p class="sub">Más oscuro = mayor potencial. ⚡ marca el nodo de falla.</p>
+          <div id="diagrama" style="display:grid;place-items:center"></div>
+        </div>
+        <div class="tarjeta">
+          <h3>Convergencia del error · SOR</h3>
+          <p class="sub">Residuo relativo ‖b − G·V‖∞ / ‖b‖∞ en cada iteración (escala logarítmica).</p>
+          <div id="curva"></div>
+          <div class="nota"><span class="nota-num">2</span>Al pasar el cursor: línea vertical y tarjeta con iteración y residuo. Botón "Descargar PNG" en la esquina de la tarjeta.</div>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div><h3>Calculado frente a medido en el montaje</h3><p class="sub">Tensión de cada nodo respecto de la tierra común. Detalle completo en la vista Validación.</p></div>
+          <div class="exportar"><span class="boton">⭳ CSV</span><span class="boton">⭳ TXT</span></div>
+        </div>
+        <table id="tabla"></table>
+      </div>
+    </section>
+  </div>
+  <p class="pie-boceto">Mockup 2 de 5 · Simulación · datos ilustrativos (montaje 3×3: enlaces 100 Ω, fugas 1 kΩ, fuente 5 V con 220 Ω en el nodo 5) · las mediciones son de ejemplo</p>
+</main>
+
+<script>
+  const D = window.DATOS, S = D.sim3x3, V = D.validacion;
+  document.getElementById("netlist").textContent = D.netlist_montaje.split("\n").slice(0, 9).join("\n") + "\n…";
+  document.getElementById("it").textContent = S.iteraciones;
+  document.getElementById("tiempo").innerHTML = G.fmt(S.tiempo_ms, 2) + "<small>ms</small>";
+  const r = S.historial[S.historial.length - 1], e = Math.floor(Math.log10(r));
+  document.getElementById("residuo").innerHTML = G.fmt(r / 10 ** e, 1) + " × " + G.potencia(e);
+  document.getElementById("diagrama").innerHTML = G.diagramaMalla(S.potenciales, { paso: 130, falla: 5 });
+
+  const h = S.historial, n = h.length;
+  const k = Math.min(40, n);
+  const pasoX = n > 60 ? 20 : n > 20 ? 5 : 1;
+  document.getElementById("curva").innerHTML = G.lineas({
+    ancho: 520, alto: 300, logY: true, dominioX: [0, n + 1], dominioY: [1e-10, 1],
+    ticksY: [1, 1e-2, 1e-4, 1e-6, 1e-8, 1e-10], ticksX: Array.from({ length: n + 2 }, (_, i) => i).filter((i) => i % pasoX === 0),
+    tituloX: "Iteración", tituloY: "Residuo relativo", margenDer: 24,
+    referencias: [{ y: 1e-8, texto: "tolerancia 10⁻⁸", xTexto: 2, debajo: true }],
+    series: [{ color: "#00b894", puntos: h.map((v, i) => [i + 1, v]), marcadores: [[n, h[n - 1]]] }],
+    tooltip: { x: k, titulo: "Iteración " + k, filas: [{ nombre: "Residuo", color: "#00b894", y: h[k - 1], valor: h[k - 1].toExponential(2) }] },
+  });
+
+  let t = `<tr><th>Nodo</th><th class="der">Calculado (V)</th><th class="der">Medido (V)</th><th class="der">Diferencia (V)</th><th class="der">Error relativo</th></tr>`;
+  S.potenciales.forEach((v, i) => {
+    const m = V.medido[i], err = (m - v) / v * 100;
+    t += `<tr${i === 4 ? ' class="destacada"' : ""}><td>${i + 1}${i === 4 ? " ⚡ falla" : ""}</td><td class="der">${G.fmt(v, 3)}</td><td class="der">${G.fmt(m, 3)}</td><td class="der">${(m - v >= 0 ? "+" : "") + G.fmt(m - v, 3)}</td><td class="der">${(err >= 0 ? "+" : "") + G.fmt(err, 1)} %</td></tr>`;
+  });
+  document.getElementById("tabla").innerHTML = t;
+</script>
+</body>
+</html>

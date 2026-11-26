@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mockup 4 · Casos de estudio</title>
+<link rel="stylesheet" href="mockups.css">
+<script src="datos_mockups.js"></script>
+<script src="graficos.js"></script>
+<style>
+  .filtros { display: flex; align-items: end; gap: 24px; flex-wrap: wrap; }
+  .filtros .campo { margin: 0; }
+  .grupo { display: flex; gap: 8px; }
+  .principal { display: grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: start; }
+  .mapas { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; position: relative; }
+  .mapas h4 { font-size: 14px; margin-bottom: 8px; }
+  .tooltip { position: absolute; background: #fff; border: 1px solid var(--eje); border-radius: 8px; padding: 10px 12px; font-size: 12px; box-shadow: var(--sombra); width: 210px; }
+  .tooltip b { display: block; font-size: 13px; margin-bottom: 4px; }
+  .tooltip div { display: flex; justify-content: space-between; color: var(--tinta-2); }
+  .tooltip div span:last-child { color: var(--tinta); font-weight: 600; }
+  .leyenda-zonas { display: flex; gap: 14px; font-size: 12px; color: var(--tinta-2); margin-top: 8px; flex-wrap: wrap; }
+  .leyenda-zonas span { display: inline-flex; align-items: center; gap: 6px; }
+  .leyenda-zonas i { width: 16px; height: 16px; border-radius: 3px; display: inline-grid; place-items: center; font-style: normal; font-weight: 700; font-size: 10px; }
+  .veredicto { text-align: center; padding: 20px; border-radius: var(--radio); }
+  .veredicto.peligro { background: #fdeeee; border: 1px solid #f3b6b6; }
+  .veredicto.ok { background: #effaf1; border: 1px solid #b9e6c1; }
+  .veredicto .palabra { font-size: 34px; font-weight: 800; letter-spacing: .02em; display: inline-flex; align-items: center; gap: 10px; }
+  .veredicto .palabra .ico { width: 38px; height: 38px; font-size: 20px; }
+  .medidor { margin-top: 16px; }
+  .medidor .cab { display: flex; justify-content: space-between; font-size: 13px; }
+  .medidor .cab b { font-variant-numeric: tabular-nums; }
+  .medidor .barra-m { position: relative; height: 10px; border-radius: 5px; background: #eef1f4; margin-top: 6px; }
+  .medidor .valor { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; background: var(--marca-500); }
+  .medidor .limite { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--tinta); }
+  .medidor .pie { font-size: 11px; color: var(--tinta-2); margin-top: 4px; }
+  #mini { flex-shrink: 0; }
+  .mini { display: flex; gap: 12px; align-items: center; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--borde); font-size: 12px; color: var(--tinta-2); }
+</style>
+</head>
+<body>
+<header class="barra">
+  <div class="logo"><svg width="26" height="26" viewBox="0 0 26 26"><rect x="1" y="1" width="24" height="24" rx="5" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M1 9h24M1 17h24M9 1v24M17 1v24" stroke="#fff" stroke-width="1.2"/><circle cx="9" cy="17" r="3" fill="#ec4647"/></svg>Mallas de puesta a tierra</div>
+  <nav><a>Contexto</a><a>Simulación</a><a>Comparación</a><a class="activa">Casos de estudio</a><a>Validación</a></nav>
+  <div class="salud"><i></i>Servidor conectado</div>
+</header>
+
+<main class="pagina">
+  <div class="titulo-vista">
+    <div>
+      <span class="pregunta">¿Ese mapa implica riesgo para una persona? ¿Cambia al crecer la malla o al mover la falla?</span>
+      <h1>Casos de estudio</h1>
+      <p>Mallas sintéticas de hasta 50×50 nodos con parámetros de terreno tomados de IEEE Std 80. Cada escenario termina en un veredicto.</p>
+    </div>
+  </div>
+
+  <div class="tarjeta filtros">
+    <div class="campo"><label>Tamaño</label><div class="grupo"><span class="chip">10×10</span><span class="chip on">20×20</span><span class="chip">50×50</span></div></div>
+    <div class="campo"><label>Ubicación de la falla</label><div class="grupo"><span class="chip">Centro</span><span class="chip on">Esquina</span><span class="chip">Elegir nodo…</span></div></div>
+    <div class="campo"><label>Densidad de conductores</label><div class="grupo"><span class="chip on">Alta</span><span class="chip">Escasa</span></div></div>
+    <div class="campo" style="width:330px"><label>Terreno y falla</label><div class="selector">Grava · ρs 3000 Ω·m · Cs 0,7 · ts 0,5 s</div></div>
+    <span class="boton primario" style="margin-left:auto">Calcular escenario</span>
+  </div>
+
+  <div class="principal">
+    <div class="tarjeta">
+      <h3>Malla 20×20 · falla en la esquina · densidad alta</h3>
+      <p class="sub" id="sub"></p>
+      <div class="mapas" id="mapas">
+        <div><h4>Potencial del terreno</h4><div id="calor"></div><div id="rampa" style="margin-top:8px"></div></div>
+        <div><h4>Zonas de riesgo (paso y toque frente al límite)</h4><div id="zonas"></div>
+          <div class="leyenda-zonas">
+            <span><i style="background:#c8eccd"></i>Verde: &lt; 80 % del límite</span>
+            <span><i style="background:#fbb315;color:#0b0b0b">!</i>Amarilla: 80–100 %</span>
+            <span><i style="background:#dc3c3d;color:#fff">✕</i>Roja: supera el límite</span>
+          </div>
+        </div>
+        <div class="tooltip" id="tt" style="left:150px;top:150px"></div>
+      </div>
+      <div class="nota" style="margin-top:14px"><span class="nota-num">1</span>Los dos mapas se resaltan juntos: al pasar el cursor por una celda se marca la misma celda en ambos y aparece la tarjeta con sus valores. Especificación completa en <b>mapa_calor.md</b>.</div>
+    </div>
+
+    <aside style="display:grid;gap:20px">
+      <div class="tarjeta">
+        <div class="veredicto" id="veredicto"></div>
+        <div id="medidores"></div>
+        <div class="mini"><div id="mini"></div><div>Misma malla con la falla <b>al centro</b>: <span id="mini-v"></span><br>Mover la falla a la esquina redistribuye todo el mapa.</div></div>
+      </div>
+      <div class="tarjeta">
+        <h3>Exportar</h3>
+        <p class="sub">Potenciales por nodo, zonas y parámetros del escenario.</p>
+        <div style="display:flex;gap:10px"><span class="boton">⭳ CSV</span><span class="boton">⭳ TXT</span><span class="boton">⭳ Mapa PNG</span></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="tarjeta">
+    <h3>Resumen de escenarios</h3>
+    <p class="sub">Mismos umbrales para todos. Clic en una fila para abrir su mapa.</p>
+    <table id="tabla"></table>
+  </div>
+  <p class="pie-boceto">Mockup 4 de 5 · Casos de estudio · datos ilustrativos calculados con la Capa 3 y un solver de prueba · la definición final de paso, toque y escalado la fija el documento técnico</p>
+</main>
+
+<script>
+  const K = window.DATOS.casos, E = K.escenarios;
+  const esq = E.find((e) => e.nombre.startsWith("20x20 · esquina")), cen = E.find((e) => e.nombre.startsWith("20x20 · centro · densa"));
+  const fmt0 = (v) => G.fmt(v, 0);
+  document.getElementById("sub").textContent = `Corriente de falla ${G.fmt(K.corriente_A / 1000, 1)} kA inyectada en el nodo 1. GPR (potencial máximo) ${G.fmt(esq.gpr / 1000, 2)} kV.`;
+
+  const hover = [1, 1];
+  const calor = G.mapaCalor(esq.potencial, { celda: 22, falla: [0, 0], hover, titulo: "Potencial 20x20" });
+  document.getElementById("calor").innerHTML = calor.svg;
+  document.getElementById("rampa").innerHTML = G.leyendaRampa(calor.min, calor.max, "V", 444);
+  document.getElementById("zonas").innerHTML = G.mapaZonas(esq.zona, { celda: 22, falla: [0, 0] });
+
+  const v = esq.potencial[hover[0]][hover[1]], vf = esq.potencial[0][0];
+  const [hf, hc] = hover;
+  const vec = [[hf - 1, hc], [hf + 1, hc], [hf, hc - 1], [hf, hc + 1]].map(([f, c]) => Math.abs(v - esq.potencial[f][c]));
+  // el toque solo se evalúa a un nodo de la estructura en falla (nodo 1)
+  const paso = Math.max(...vec), toque = hf <= 1 && hc <= 1 ? vf - v : null, z = esq.zona[hf][hc];
+  const tt = document.getElementById("tt");
+  tt.style.left = (2 + hover[1] * 22 + 34) + "px"; tt.style.top = (30 + hover[0] * 22 + 10) + "px";
+  tt.innerHTML = `<b>Nodo ${hover[0] * 20 + hover[1] + 1} · fila ${hover[0] + 1}, col. ${hover[1] + 1}</b>
+    <div><span>Potencial</span><span>${fmt0(v)} V</span></div>
+    <div><span>Tensión de paso</span><span>${fmt0(paso)} V</span></div>
+    <div><span>Tensión de toque</span><span>${toque === null ? "— (sin estructura)" : fmt0(toque) + " V"}</span></div>
+    <div><span>Zona</span><span>${["Verde", "Amarilla", "Roja"][z]}</span></div>`;
+
+  function veredicto(e) {
+    return e.veredicto === "SEGURO"
+      ? `<span class="estado ok"><span class="ico">✓</span>Seguro</span>` : `<span class="estado peligro"><span class="ico">✕</span>Inseguro</span>`;
+  }
+  const ok = esq.veredicto === "SEGURO";
+  document.getElementById("veredicto").className = "veredicto " + (ok ? "ok" : "peligro");
+  document.getElementById("veredicto").innerHTML = `<div class="pregunta">Veredicto de seguridad</div>
+    <div class="palabra estado ${ok ? "ok" : "peligro"}"><span class="ico">${ok ? "✓" : "✕"}</span>${esq.veredicto}</div>
+    <p style="font-size:13px;color:var(--tinta-2);margin-top:6px">${ok ? "Ningún punto supera los límites." : "La tensión de toque junto a la estructura en falla supera el límite admisible."}</p>`;
+
+  function medidor(nombre, val, lim) {
+    const esc = Math.max(val, lim) * 1.15, pct = val / lim * 100;
+    return `<div class="medidor"><div class="cab"><span>${nombre} máxima</span><b>${fmt0(val)} V <span style="font-weight:400;color:var(--tinta-2)">/ ${fmt0(lim)} V</span></b></div>
+      <div class="barra-m"><div class="valor" style="width:${val / esc * 100}%"></div><div class="limite" style="left:${lim / esc * 100}%"></div></div>
+      <div class="pie">${pct > 100 ? '<span class="estado peligro" style="font-size:11px"><span class="ico" style="width:14px;height:14px;font-size:9px">✕</span>' + fmt0(pct) + " % del límite</span>" : fmt0(pct) + " % del límite"} · la marca negra es el límite</div></div>`;
+  }
+  document.getElementById("medidores").innerHTML = medidor("Tensión de toque", esq.toque_max, K.lim_toque) + medidor("Tensión de paso", esq.paso_max, K.lim_paso) +
+    `<div class="medidor"><div class="cab"><span>Nodos en zona roja</span><b>${G.fmt(esq.pct_rojo, 1)} %</b></div></div>`;
+
+  document.getElementById("mini").innerHTML = G.mapaCalor(cen.potencial, { celda: 5, titulo: "Falla al centro" }).svg;
+  document.getElementById("mini-v").innerHTML = veredicto(cen);
+
+  let t = `<tr><th>Escenario</th><th class="der">Nodos</th><th class="der">GPR (V)</th><th class="der">Paso máx. (V)</th><th class="der">Toque máx. (V)</th><th class="der">Zona amarilla</th><th class="der">Zona roja</th><th>Veredicto</th></tr>`;
+  for (const e of E) {
+    t += `<tr${e === esq ? ' class="destacada"' : ""}><td>${e.nombre.replace(/(\d)x(\d)/, "$1×$2")}</td><td class="der">${(e.filas * e.filas).toLocaleString("es-CO")}</td><td class="der">${fmt0(e.gpr)}</td>
+      <td class="der">${fmt0(e.paso_max)}</td><td class="der">${fmt0(e.toque_max)}</td><td class="der">${G.fmt(e.pct_amarillo, 1)} %</td><td class="der">${G.fmt(e.pct_rojo, 1)} %</td><td>${veredicto(e)}</td></tr>`;
+  }
+  t += `<tr><td colspan="8" style="color:var(--tinta-2);font-size:12px">Límites aplicados: toque ${fmt0(K.lim_toque)} V · paso ${fmt0(K.lim_paso)} V (IEEE Std 80 con ρs = 3000 Ω·m, Cs = 0,7, ts = 0,5 s).</td></tr>`;
+  document.getElementById("tabla").innerHTML = t;
+</script>
+</body>
+</html>

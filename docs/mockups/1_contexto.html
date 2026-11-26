@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mockup 1 · Contexto</title>
+<link rel="stylesheet" href="mockups.css">
+<style>
+  .hero { display: grid; grid-template-columns: 1fr 640px; gap: 40px; align-items: center; padding: 48px 40px 40px; background: linear-gradient(180deg, #fff 0%, var(--plano) 100%); border-bottom: 1px solid var(--borde); }
+  .hero h1 { font-size: 40px; letter-spacing: -.01em; }
+  .hero p.lead { font-size: 18px; color: var(--tinta-2); margin: 16px 0 24px; max-width: 560px; }
+  .hero .acciones { display: flex; gap: 12px; }
+  .cadena { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .paso { position: relative; background: #fff; border: 1px solid var(--borde); border-radius: var(--radio); padding: 16px; }
+  .paso .n { width: 26px; height: 26px; border-radius: 50%; background: var(--marca-100); color: var(--marca-700); display: grid; place-items: center; font-weight: 700; font-size: 13px; margin-bottom: 10px; }
+  .paso h4 { font-size: 14px; margin-bottom: 4px; }
+  .paso p { font-size: 13px; color: var(--tinta-2); }
+  .paso .vista { margin-top: 10px; font-size: 12px; color: var(--marca-500); font-weight: 600; }
+  .paso:not(:last-child)::after { content: "→"; position: absolute; right: -11px; top: 50%; transform: translateY(-50%); color: var(--tinta-2); background: var(--plano); font-size: 14px; }
+  .paso.final { border-color: var(--estado-ok); background: #f3fbf4; }
+  .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .formula { font: 15px/1.6 "Cambria Math", "STIX Two Math", serif; background: #fbfcfd; border: 1px solid var(--borde); border-radius: 8px; padding: 12px 16px; margin: 10px 0; }
+  .ecuacion { font: 17px "Cambria Math", "STIX Two Math", serif; text-align: center; padding: 14px; background: var(--marca-100); border-radius: 8px; color: var(--marca-900); }
+  .storyboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .cuadro { border: 1px solid var(--borde); border-radius: 8px; overflow: hidden; background: #fff; }
+  .cuadro .lienzo { height: 120px; background: #f7f9fb; display: grid; place-items: center; }
+  .cuadro p { font-size: 12px; padding: 8px 10px; color: var(--tinta-2); }
+  .cuadro b { color: var(--tinta); }
+  .cta { display: flex; align-items: center; justify-content: space-between; background: var(--marca-700); color: #fff; border-radius: var(--radio); padding: 24px 28px; }
+  .cta h3 { color: #fff; font-size: 20px; }
+  .cta p { color: #c9dceb; }
+</style>
+</head>
+<body>
+<header class="barra">
+  <div class="logo"><svg width="26" height="26" viewBox="0 0 26 26"><rect x="1" y="1" width="24" height="24" rx="5" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M1 9h24M1 17h24M9 1v24M17 1v24" stroke="#fff" stroke-width="1.2"/><circle cx="9" cy="17" r="3" fill="#ec4647"/></svg>Mallas de puesta a tierra</div>
+  <nav><a class="activa">Contexto</a><a>Simulación</a><a>Comparación</a><a>Casos de estudio</a><a>Validación</a></nav>
+  <div class="salud"><i></i>Servidor conectado</div>
+</header>
+
+<section class="hero">
+  <div>
+    <span class="pregunta">¿Por qué importa?</span>
+    <h1>Cuando ocurre una falla en una subestación, el suelo bajo tus pies se electrifica.</h1>
+    <p class="lead">Miles de amperios entran a la tierra por una malla de cobre enterrada. Esta aplicación calcula cuánto sube el potencial en cada punto del patio y si una persona que camine o toque una estructura estaría a salvo.</p>
+    <div class="acciones"><span class="boton primario">Ver la simulación →</span><span class="boton">Cómo se calcula</span></div>
+  </div>
+  <svg width="640" height="330" viewBox="0 0 640 330" role="img" aria-label="Subestación con malla enterrada y perfil de potencial">
+    <!-- perfil de potencial -->
+    <path d="M20 118 C 170 116, 230 30, 320 28 C 410 30, 470 116, 620 118" fill="none" stroke="#1f6fa3" stroke-width="2.5"/>
+    <path d="M20 118 C 170 116, 230 30, 320 28 C 410 30, 470 116, 620 118 L620 120 L20 120Z" fill="#cce3fd" opacity=".55"/>
+    <line x1="20" y1="62" x2="620" y2="62" stroke="#dc3c3d" stroke-dasharray="6 5"/>
+    <text x="616" y="55" text-anchor="end" font-size="12" fill="#b42324">límite admisible</text>
+    <text x="24" y="20" font-size="12" fill="#5c6670">potencial del terreno</text>
+    <!-- equipos -->
+    <g stroke="#0d3a5a" stroke-width="2" fill="#fff">
+      <rect x="250" y="150" width="70" height="56" rx="4"/><rect x="262" y="138" width="10" height="12"/><rect x="298" y="138" width="10" height="12"/>
+      <path d="M380 206 V150 M370 150 h20 M372 162 h16 M374 174 h12" fill="none"/>
+      <path d="M200 206 V158 l-14 -14 M200 158 l14 -14" fill="none"/>
+    </g>
+    <path d="M345 132 l-10 26 h12 l-10 28" fill="none" stroke="#dc3c3d" stroke-width="3" stroke-linejoin="round"/>
+    <!-- suelo y malla -->
+    <rect x="20" y="206" width="600" height="110" fill="#efe9df"/>
+    <line x1="20" y1="206" x2="620" y2="206" stroke="#8b7b62" stroke-width="2"/>
+    <g stroke="#b06a2c" stroke-width="2">
+      <path d="M140 250 L500 250 M120 270 L520 270 M100 290 L540 290"/>
+      <path d="M140 250 L100 290 M230 250 L210 290 M320 250 L320 290 M410 250 L430 290 M500 250 L540 290"/>
+    </g>
+    <circle cx="320" cy="270" r="6" fill="#dc3c3d"/>
+    <path d="M320 270 C 300 300, 260 312, 220 312 M320 270 C 340 300, 380 312, 420 312" fill="none" stroke="#dc3c3d" stroke-width="1.5" stroke-dasharray="3 4"/>
+    <text x="548" y="262" font-size="12" fill="#6b5a3e">malla de cobre</text>
+    <text x="548" y="277" font-size="12" fill="#6b5a3e">enterrada</text>
+    <text x="330" y="246" font-size="12" fill="#b42324">I<tspan font-size="9" dy="3">f</tspan></text>
+  </svg>
+</section>
+
+<main class="pagina">
+  <section class="tarjeta">
+    <h3>De la falla al veredicto</h3>
+    <p class="sub">La cadena que recorre la aplicación. Cada tramo se explora en una vista.</p>
+    <div class="cadena">
+      <div class="paso"><div class="n">1</div><h4>Falla a tierra</h4><p>Una fase toca una estructura: entra la corriente I<sub>f</sub>.</p><div class="vista">Contexto</div></div>
+      <div class="paso"><div class="n">2</div><h4>Corriente en la malla</h4><p>Se reparte por los conductores y escapa al terreno.</p><div class="vista">Simulación</div></div>
+      <div class="paso"><div class="n">3</div><h4>Sube el potencial</h4><p>Se resuelve G·V = I con cuatro métodos iterativos.</p><div class="vista">Comparación</div></div>
+      <div class="paso"><div class="n">4</div><h4>Paso y toque</h4><p>Diferencias de potencial que sentiría una persona.</p><div class="vista">Casos de estudio</div></div>
+      <div class="paso"><div class="n">5</div><h4>IEEE Std 80</h4><p>Se comparan con límites escalados al modelo.</p><div class="vista">Casos de estudio</div></div>
+      <div class="paso final"><div class="n">6</div><h4>Veredicto</h4><p><span class="estado ok"><span class="ico">✓</span>Seguro</span> o <span class="estado peligro"><span class="ico">✕</span>Inseguro</span></p><div class="vista">Validado con el montaje físico</div></div>
+    </div>
+  </section>
+
+  <section class="dos">
+    <div class="tarjeta">
+      <h3>Tensión de paso y tensión de toque</h3>
+      <p class="sub">El cuerpo no siente el potencial, siente la diferencia entre dos puntos que toca a la vez.</p>
+      <svg width="600" height="190" viewBox="0 0 600 190" role="img" aria-label="Persona caminando y persona tocando una estructura">
+        <rect x="0" y="150" width="600" height="40" fill="#efe9df"/><line x1="0" y1="150" x2="600" y2="150" stroke="#8b7b62" stroke-width="2"/>
+        <!-- paso -->
+        <g stroke="#0d3a5a" stroke-width="3" fill="none" stroke-linecap="round">
+          <circle cx="140" cy="48" r="11" fill="#fff"/><path d="M140 59 V105 M140 72 l-18 18 M140 72 l18 16 M140 105 l-26 45 M140 105 l26 45"/>
+        </g>
+        <path d="M114 150 q26 -26 52 0" fill="none" stroke="#dc3c3d" stroke-width="2" stroke-dasharray="4 3"/>
+        <text x="140" y="172" text-anchor="middle" font-size="12" fill="#5c6670">1 m</text>
+        <text x="140" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#0b2f4a">Paso: pie → pie</text>
+        <!-- toque -->
+        <g stroke="#0d3a5a" stroke-width="3" fill="none" stroke-linecap="round">
+          <rect x="470" y="40" width="16" height="110" fill="#d9e2ea" stroke-width="2"/>
+          <circle cx="410" cy="48" r="11" fill="#fff"/><path d="M410 59 V105 M410 72 l58 6 M410 72 l-16 20 M410 105 l-14 45 M410 105 l14 45"/>
+        </g>
+        <path d="M468 78 C 440 100, 420 130, 414 150" fill="none" stroke="#dc3c3d" stroke-width="2" stroke-dasharray="4 3"/>
+        <text x="420" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#0b2f4a">Toque: mano → pies</text>
+        <text x="478" y="172" text-anchor="middle" font-size="12" fill="#5c6670">estructura unida a la malla</text>
+      </svg>
+      <p style="font-size:13px;color:var(--tinta-2)">El toque es más peligroso: la corriente cruza el corazón. Por eso su límite es más estricto.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>IEEE Std 80: cuánto tolera el cuerpo</h3>
+      <p class="sub">La norma no limita el potencial, limita las diferencias que una persona puede soportar sin fibrilación.</p>
+      <div class="formula">E<sub>toque</sub> ≈ (1000 + 1,5 · C<sub>s</sub> · ρ<sub>s</sub>) · 0,116 / √t<sub>s</sub><br>E<sub>paso</sub> ≈ (1000 + 6 · C<sub>s</sub> · ρ<sub>s</sub>) · 0,116 / √t<sub>s</sub></div>
+      <table>
+        <tr><th>Símbolo</th><th>Qué es</th><th class="der">Ejemplo</th></tr>
+        <tr><td>ρ<sub>s</sub></td><td>Resistividad de la capa superficial (grava)</td><td class="der">3000 Ω·m</td></tr>
+        <tr><td>C<sub>s</sub></td><td>Factor de reducción de esa capa</td><td class="der">0,7</td></tr>
+        <tr><td>t<sub>s</sub></td><td>Duración de la falla</td><td class="der">0,5 s</td></tr>
+        <tr><td colspan="2"><b>Límites resultantes</b></td><td class="der"><b>681 V toque · 2231 V paso</b></td></tr>
+      </table>
+      <div class="nota" style="margin-top:12px"><span class="nota-num">1</span>En el montaje de laboratorio estos límites se <b>escalan</b>; aplicarlos en valor absoluto daría veredictos sin sentido. Mostrar aquí un enlace a "¿Cómo se escala?".</div>
+    </div>
+  </section>
+
+  <section class="tarjeta">
+    <h3>Del terreno a un sistema de ecuaciones</h3>
+    <p class="sub">Cada nodo de la malla aporta una ecuación: lo que entra por los vecinos más lo que escapa al terreno es igual a lo que se inyecta.</p>
+    <div style="display:grid;grid-template-columns:260px 1fr 300px;gap:32px;align-items:center">
+      <svg width="260" height="230" viewBox="0 0 260 230" role="img" aria-label="Malla 3x3">
+        <g stroke="#c2c2c2" stroke-width="3"><path d="M40 30H220M40 115H220M40 200H220M40 30V200M130 30V200M220 30V200"/></g>
+        <g fill="#fff" stroke="#1f6fa3" stroke-width="2">
+          <circle cx="40" cy="30" r="13"/><circle cx="130" cy="30" r="13"/><circle cx="220" cy="30" r="13"/>
+          <circle cx="40" cy="115" r="13"/><circle cx="130" cy="115" r="15" fill="#1f6fa3"/><circle cx="220" cy="115" r="13"/>
+          <circle cx="40" cy="200" r="13"/><circle cx="130" cy="200" r="13"/><circle cx="220" cy="200" r="13"/>
+        </g>
+        <g font-size="11" text-anchor="middle" fill="#191919"><text x="40" y="34">1</text><text x="130" y="34">2</text><text x="220" y="34">3</text><text x="40" y="119">4</text><text x="130" y="119" fill="#fff" font-weight="700">5</text><text x="220" y="119">6</text><text x="40" y="204">7</text><text x="130" y="204">8</text><text x="220" y="204">9</text></g>
+        <text x="148" y="100" font-size="16">⚡</text>
+      </svg>
+      <div>
+        <div class="ecuacion">4,1·V<sub>5</sub> − V<sub>2</sub> − V<sub>4</sub> − V<sub>6</sub> − V<sub>8</sub> = 1 A</div>
+        <p style="font-size:13px;color:var(--tinta-2);margin-top:12px">Ecuación del nodo 5: cuatro enlaces de 1 Ω y una fuga de 10 Ω al terreno (0,1 S). Juntando las nueve ecuaciones se obtiene <b>G·V = I</b>. Sin la fuga al terreno la matriz no tendría solución única: es el detalle que más se pasa por alto.</p>
+        <div class="nota" style="margin-top:12px"><span class="nota-num">2</span>Al pasar el cursor por un nodo del dibujo se resalta su fila en la matriz y su ecuación.</div>
+      </div>
+      <div>
+        <svg width="300" height="230" viewBox="0 0 300 230" role="img" aria-label="Patrón de la matriz G 9x9">
+          <g id="patron"></g>
+          <text x="150" y="226" text-anchor="middle" font-size="12" fill="#5c6670">G es 9×9 pero solo 33 de 81 entradas no son cero</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="tarjeta">
+    <h3>Animación del recorrido completo <span style="font-weight:400;color:var(--tinta-2);font-size:13px">· guion en 4 cuadros, ~12 s, se repite</span></h3>
+    <p class="sub">Cierra la vista y lleva a la simulación. Botones: pausar y saltar.</p>
+    <div class="storyboard">
+      <div class="cuadro"><div class="lienzo"><svg width="160" height="90" viewBox="0 0 160 90"><rect y="60" width="160" height="30" fill="#efe9df"/><path d="M84 6 l-10 24 h12 l-10 28" fill="none" stroke="#dc3c3d" stroke-width="3"/><rect x="50" y="34" width="26" height="26" fill="#fff" stroke="#0d3a5a" stroke-width="2"/></svg></div><p><b>1 · Falla.</b> Un rayo de corriente baja hasta la malla.</p></div>
+      <div class="cuadro"><div class="lienzo"><svg width="160" height="90" viewBox="0 0 160 90"><rect y="60" width="160" height="30" fill="#efe9df"/><circle cx="80" cy="72" r="5" fill="#dc3c3d"/><circle cx="80" cy="72" r="18" fill="none" stroke="#dc3c3d" opacity=".5"/><circle cx="80" cy="72" r="34" fill="none" stroke="#dc3c3d" opacity=".25"/></svg></div><p><b>2 · Elevación.</b> Ondas de potencial se expanden desde el punto de falla.</p></div>
+      <div class="cuadro"><div class="lienzo"><svg width="160" height="90" viewBox="0 0 160 90"><path d="M10 70 C 50 70, 60 18, 80 18 C 100 18, 110 70, 150 70" fill="none" stroke="#1f6fa3" stroke-width="2"/><line x1="10" y1="40" x2="150" y2="40" stroke="#dc3c3d" stroke-dasharray="4 3"/><circle cx="64" cy="40" r="4" fill="#dc3c3d"/><circle cx="96" cy="40" r="4" fill="#dc3c3d"/></svg></div><p><b>3 · Riesgo.</b> El perfil cruza el límite: aparece la zona roja.</p></div>
+      <div class="cuadro"><div class="lienzo"><svg width="160" height="90" viewBox="0 0 160 90"><g font-family="Cambria Math, serif" font-size="16" fill="#0b2f4a"><text x="80" y="40" text-anchor="middle">G · V = I</text></g><rect x="40" y="56" width="80" height="8" rx="4" fill="#e7e7e7"/><rect x="40" y="56" width="52" height="8" rx="4" fill="#00b894"/></svg></div><p><b>4 · Cálculo.</b> La ecuación se resuelve iteración a iteración → botón "Ir a la simulación".</p></div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div><h3>¿Qué pasa si la falla ocurre en una esquina?</h3><p>Pruébalo en la simulación o mira los casos de estudio con mallas de hasta 50×50 nodos.</p></div>
+    <span class="boton">Ir a la simulación →</span>
+  </section>
+  <p class="pie-boceto">Mockup 1 de 5 · Vista de contexto (Landing) · escritorio 1440 px · las notas amarillas son anotaciones del boceto, no parte de la interfaz</p>
+</main>
+
+<script>
+  // Patrón de dispersión de G (malla 3x3): diagonal + vecinos
+  const n = 3, c = 22, ox = 51, oy = 4;
+  let s = "";
+  for (let i = 0; i < 9; i++) for (let j = 0; j < 9; j++) {
+    const fi = Math.floor(i / n), ci = i % n, fj = Math.floor(j / n), cj = j % n;
+    const diag = i === j, vec = Math.abs(fi - fj) + Math.abs(ci - cj) === 1;
+    const fill = diag ? "#0e3d7e" : vec ? "#84b9f3" : "#f1f3f5";
+    s += `<rect x="${ox + j * c}" y="${oy + i * c}" width="${c - 2}" height="${c - 2}" rx="3" fill="${fill}" ${i === 4 ? 'stroke="#191919" stroke-width="1.5"' : ""}/>`;
+  }
+  document.getElementById("patron").innerHTML = s;
+</script>
+</body>
+</html>
