@@ -1,16 +1,21 @@
-"""
-Stub del método de Jacobi.
+"""Método iterativo de Jacobi para sistemas dispersos."""
 
-Rol responsable: ingeniero numérico.
-"""
+from .tipos import MatrizDispersa, ResultadoSolucion
 
 
-def jacobi(G, I, omega=1.0, tol=1e-6, max_iter=1000):
+def jacobi(
+    matriz: MatrizDispersa,
+    tolerancia: float,
+    omega: float,
+    max_iteraciones: int,
+) -> ResultadoSolucion:
+    """Resuelve ``G·V=b`` mediante Jacobi.
+
+    La actualización es ``V_i^(k+1) = (b_i - Σ[j≠i] G_ij V_j^k) / G_ii``;
+    ``omega`` se recibe para mantener la firma común y no se utiliza. La
+    iteración termina cuando ``||b-G·V||∞ / ||b||∞ < tolerancia`` o se alcanza
+    ``max_iteraciones``.
+
+    TODO: sprint 2.
     """
-    Stub para Jacobi.
-
-    TODO: implementar en Sprint 2 (rol: ingeniero numérico).
-    TODO: definir la estructura de retorno (solución, iteraciones, historial de error).
-    TODO: documentar el criterio de parada y el manejo de no convergencia.
-    """
-    pass
+    raise NotImplementedError  # TODO sprint 2

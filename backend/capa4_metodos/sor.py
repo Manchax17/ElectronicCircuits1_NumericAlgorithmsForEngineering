@@ -1,17 +1,21 @@
-"""
-Stub del método SOR (Successive Over-Relaxation).
+"""Método SOR para sistemas dispersos."""
 
-Rol responsable: ingeniero numérico.
-"""
+from .tipos import MatrizDispersa, ResultadoSolucion
 
 
-def sor(G, I, omega=1.0, tol=1e-6, max_iter=1000):
+def sor(
+    matriz: MatrizDispersa,
+    tolerancia: float,
+    omega: float,
+    max_iteraciones: int,
+) -> ResultadoSolucion:
+    """Resuelve ``G·V=b`` mediante sobrerrelajación sucesiva (SOR).
+
+    La actualización es ``V_i^(k+1) = (1-omega)V_i^k + omega
+    (b_i - Σ[j<i] G_ij V_j^(k+1) - Σ[j>i] G_ij V_j^k) / G_ii``. La iteración
+    termina cuando ``||b-G·V||∞ / ||b||∞ < tolerancia`` o se alcanza
+    ``max_iteraciones``.
+
+    TODO: sprint 2.
     """
-    Stub para SOR.
-
-    TODO: implementar en Sprint 2 (rol: ingeniero numérico).
-    TODO: documentar el rango válido de ``omega`` (0 < omega < 2).
-    TODO: definir la estructura de retorno (solución, iteraciones, historial de error).
-    TODO: documentar el criterio de parada y el manejo de no convergencia.
-    """
-    pass
+    raise NotImplementedError  # TODO sprint 2
